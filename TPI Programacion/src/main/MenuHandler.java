@@ -524,8 +524,8 @@ public class MenuHandler {
                 codigoBarrasActualizar.setValor(valor);
             }
 
-            System.out.print("Observaciones actuales (Enter para mantener el valor actual): " + codigoBarrasActualizar.getObservaciones());
-            String observaciones = validarEntradaStringCantidadChar(scanner, "O ingrese nuevas observaciones", 255);
+            System.out.println("Observaciones actuales (Enter para mantener el valor actual): " + codigoBarrasActualizar.getObservaciones());
+            String observaciones = validarEntradaStringCantidadChar(scanner, "nuevas observaciones", 255);
             if (!observaciones.isEmpty()) {
                 codigoBarrasActualizar.setObservaciones(observaciones);
             }
