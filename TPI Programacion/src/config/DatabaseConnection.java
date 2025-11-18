@@ -1,30 +1,39 @@
 package config;
+
 /**
- * @authors 
- * Gaston Alberto Cejas, 
- * Hernan Cóceres, 
- * Claudio Rodriguez, 
- * Hernan E.Bula
+ * @author Hernan Cóceres
+ * @author Claudio Rodriguez  
+ * @author Hernan E.Bula
+ * @author Gaston Alberto Cejas
  */
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Maneja conexión y configuración de base de datos MySQL/MariaDB.
+ * Proporciona inicialización automática de base de datos y tablas.
+ */
 public class DatabaseConnection {
-    // Configuración para MySQL 
+
+    // =========================================
+    // CONFIGURACIÓN DE CONEXIÓN
+    // =========================================
+    
     private static final String DB_NAME = "depositotpi";
     private static final String HOST = "localhost";
     private static final String PORT = "3306";
     private static final String USER = "root";
-    private static final String PASSWORD = "Laia1002";
+    private static final String PASSWORD = ""; // ← CONFIGURAR AQUÍ CONTRASEÑA LOCAL
     
     private static final String JDBC_PROTOCOL;
     private static final String URL_WITH_DB;
     private static final String URL_WITHOUT_DB;
 
     static {
-        String protocol = "mysql"; // Por defecto MySQL
+        String protocol = "mysql";
         
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -47,8 +56,21 @@ public class DatabaseConnection {
     }
 
     /**
-     * Inicializa la base de datos si no existe.
-     * Debe llamarse al inicio de la aplicación antes de usar getConnection().
+     * Constructor privado para prevenir instanciación.
+     * Clase de utilidad con métodos estáticos.
+     */
+    private DatabaseConnection() {
+        throw new UnsupportedOperationException("Clase de utilidad. No se puede instanciar.");
+    }
+
+    // =========================================
+    // MÉTODOS PÚBLICOS
+    // =========================================
+
+    /**
+     * Inicializa la base de datos verificando existencia y creándola si es necesario.
+     * 
+     * @throws SQLException Si ocurre error de conexión o inicialización
      */
     public static void inicializarBaseDatos() throws SQLException {
         try (Connection conn = DriverManager.getConnection(URL_WITH_DB, USER, PASSWORD)) {
@@ -63,6 +85,12 @@ public class DatabaseConnection {
         }
     }
     
+    /**
+     * Obtiene conexión a la base de datos configurada.
+     * 
+     * @return Conexión activa a la base de datos
+     * @throws SQLException Si la configuración es inválida o la conexión falla
+     */
     public static Connection getConnection() throws SQLException {
         if (URL_WITH_DB == null || URL_WITH_DB.isEmpty() || USER == null || USER.isEmpty()) {
             throw new SQLException("Configuración de la base de datos incompleta o inválida.");
@@ -70,10 +98,15 @@ public class DatabaseConnection {
         
         return DriverManager.getConnection(URL_WITH_DB, USER, PASSWORD);
     }
-    
+
+    // =========================================
+    // MÉTODOS PRIVADOS
+    // =========================================
+
     /**
-     * Crea la base de datos y las tablas si no existen.
-     * Se ejecuta automáticamente si la base de datos no existe.
+     * Crea la base de datos y tablas necesarias si no existen.
+     * 
+     * @throws SQLException Si ocurre error durante la creación
      */
     private static void crearBaseDatosSiNoExiste() throws SQLException {
         try (Connection conn = DriverManager.getConnection(URL_WITHOUT_DB, USER, PASSWORD);
@@ -131,19 +164,23 @@ public class DatabaseConnection {
     }
     
     /**
-     * Inserta algunos productos de prueba con códigos de barras en la base de datos.
+     * Inserta datos de prueba en las tablas para testing.
+     * 
+     * @param conn Conexión a la base de datos donde insertar datos
+     * @throws SQLException Si ocurre error durante la inserción
      */
     private static void insertarDatosPrueba(Connection conn) throws SQLException {
         System.out.println("✓ Insertando productos de prueba...");
 
         try (Statement stmt = conn.createStatement()) {
-
             String insertCodigos
                     = "INSERT IGNORE INTO codigo_barras (id, tipo, valor, fecha_asignacion, observaciones) VALUES "
                     + "(1, 'EAN13', '7791234567890', '2025-10-01', 'Lote L123 - Leche entera premium'), "
                     + "(2, 'EAN8', '7791234567891', '2025-10-02', 'Pan integral sin conservantes'), "
-                    + "(3, 'UPC', '7791234567892', '2025-10-03', 'Arroz largo fino calidad exportación') ";
-
+                    + "(3, 'UPC', '7791234567893', '2025-10-09', 'Agua mineral manantial andino'), "
+                    + "(4, 'EAN13', '7791234567894', '2025-10-10', 'Gaseosa cola original 2.25L'), "
+                    + "(5, 'EAN13', '7791234567900', '2025-10-13', 'Licuadora profesional 600W'), "
+                    + "(6, 'EAN8', '7791234567907', '2025-10-20', 'Lavandina desinfectante 1L')";
 
             stmt.executeUpdate(insertCodigos);
 
@@ -151,14 +188,16 @@ public class DatabaseConnection {
                     = "INSERT IGNORE INTO producto (id, nombre, marca, categoria, precio, peso, stock, codigo_barras_id) VALUES "
                     + "(1, 'Leche Entera', 'La Serenísima', 'ALIMENTOS', 1937.50, 1.000, 45, 1), "
                     + "(2, 'Pan de Molde', 'Bimbo', 'ALIMENTOS', 1519.75, 0.500, 32, 2), "
-                    + "(3, 'Arroz Largo Fino', 'Gallo', 'ALIMENTOS', 2867.50, 1.000, 67, 3) ";
-
+                    + "(3, 'Agua Mineral', 'Villavicencio', 'BEBIDAS', 697.50, 1.500, 88, 3), "
+                    + "(4, 'Coca-Cola', 'Coca-Cola', 'BEBIDAS', 2867.50, 2.250, 56, 4), "
+                    + "(5, 'Licuadora', 'Philips', 'ELECTRODOMESTICOS', 71284.50, 2.500, 12, 5), "
+                    + "(6, 'Lavandina', 'Ayudín', 'LIMPIEZA', 1054.00, 1.000, 63, 6)";
 
             int productosInsertados = stmt.executeUpdate(insertProductos);
             System.out.println("✓ " + productosInsertados + " productos de prueba insertados correctamente.");
 
         } catch (SQLException e) {
-            System.err.println("⚠ Advertencia: No se pudieron insertar los datos de prueba: " + e.getMessage());
+            System.err.println("\n⚠ Advertencia: No se pudieron insertar los datos de prueba: " + e.getMessage());
         }
     }
 }

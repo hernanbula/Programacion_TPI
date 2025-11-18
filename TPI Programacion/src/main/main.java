@@ -3,15 +3,16 @@ package main;
 import config.DatabaseConnection;
 
 /**
- * @authors 
- * Gaston Alberto Cejas, 
- * Hernan Cóceres, 
- * Claudio Rodriguez, 
- * Hernan E.Bula
+@author Hernan Cóceres
+@author Claudio Rodriguez
+@author Hernan E.Bula
+@author Gaston Alberto Cejas
  */
 
-// CLASE PRINCIPAL Y MÉTODO MAIN
-
+    // =========================================
+    // CLASE PRINCIPAL Y MÉTODO MAIN
+    // =========================================
+    
 /**
  * Clase principal que inicia la aplicación de gestión de productos y códigos (CRUD).
  */

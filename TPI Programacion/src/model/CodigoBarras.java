@@ -1,36 +1,42 @@
-
 package model;
 
 import java.time.LocalDate;
 
 /**
- * @authors 
- * Gaston Alberto Cejas, 
- * Hernan Cóceres, 
- * Claudio Rodriguez, 
- * Hernan E.Bula
+@author Hernan Cóceres
+@author Claudio Rodriguez
+@author Hernan E.Bula
+@author Gaston Alberto Cejas
  */
 
 /**
- * Clase que representa un código de barras asociado a un producto.
- * Extiende de Base para heredar funcionalidad de eliminación lógica e ID.
+ * Representa un código de barras con tipo, valor, fecha de asignación y observaciones.
+ * Extiende Base para heredar ID y funcionalidad de eliminación lógica.
+ * Parte de una relación unidireccional 1 a 1 con Producto (solo Producto referencia a CodigoBarras).
  */
 public class CodigoBarras extends Base {
+    
+    // =========================================
+    // DECLARACIÓN DE CLASE Y ATRIBUTOS
+    // =========================================
     
     private EnumTipo tipo;
     private String valor;
     private LocalDate fechaAsignacion;
     private String observaciones;
 
+    // =========================================
+    // CONSTRUCTORES
+    // =========================================
+
     /**
-     * Constructor completo de CodigoBarras.
-     * 
-     * @param id ID único del código de barras
-     * @param eliminado Indica si el código está marcado como eliminado
-     * @param tipo Tipo de código de barras (EAN13, EAN8, UPC)
-     * @param valor Valor del código de barras
-     * @param fechaAsignacion Fecha en que se asignó el código
-     * @param observaciones Observaciones adicionales sobre el código
+     * Constructor completo para crear un código de barras con todos los atributos.
+     * @param id ID único del código
+     * @param eliminado Estado de eliminación lógica
+     * @param tipo Tipo de código (EAN13, EAN8, UPC)
+     * @param valor Valor numérico del código
+     * @param fechaAsignacion Fecha de asignación
+     * @param observaciones Observaciones adicionales
      */
     public CodigoBarras(long id, boolean eliminado, EnumTipo tipo, String valor, LocalDate fechaAsignacion, String observaciones) {
         super(id, eliminado);
@@ -39,64 +45,87 @@ public class CodigoBarras extends Base {
         this.fechaAsignacion = fechaAsignacion;
         this.observaciones = observaciones;
     }
+    
+    /**
+     * Constructor vacío para inicialización sin parámetros.
+     */
     public CodigoBarras() {
     }
     
+    // =========================================
+    // MÉTODOS GETTER
+    // =========================================
+    
+    /**
+     * @return Tipo del código de barras
+     */
     public EnumTipo getTipo() {
         return tipo;
     }
 
+    /**
+     * @return Valor numérico del código
+     */
     public String getValor() {
         return valor;
     }
 
+    /**
+     * @return Fecha de asignación del código
+     */
     public LocalDate getFechaAsignacion() {
         return fechaAsignacion;
     }
 
+    /**
+     * @return Observaciones adicionales
+     */
     public String getObservaciones() {
         return observaciones;
     }
 
+    // =========================================
+    // MÉTODOS SETTER
+    // =========================================
+
     /**
-     * Establece el tipo de Codigo de Barras.
-     * Validación: CodigoServiceImpl verifica que no esté vacío. 
+     * Establece el tipo de código de barras.
+     * @param tipo Tipo de código (EAN13, EAN8, UPC)
      */
-public void setTipo(EnumTipo tipo) {
-    this.tipo = tipo;
-}
+    public void setTipo(EnumTipo tipo) {
+        this.tipo = tipo;
+    }
     
     /**
-     * Establece el valor del Codigo de Barras.
-     * Validación: CodigoServiceImpl verifica que NOT NULL, UNIQUE, máx. 20 
-     * (FALTA DESARROLAR ESTO)
+     * Establece el valor numérico del código.
+     * @param valor Valor del código de barras
      */
     public void setValor(String valor) {
         this.valor = valor;
     }
     
     /**
-     * Establece la fecha de asignación del código de barras.
-     * 
-     * @param fechaAsignacion La fecha de asignación
+     * Establece la fecha de asignación.
+     * @param fechaAsignacion Fecha de asignación
      */
     public void setFechaAsignacion(LocalDate fechaAsignacion) {
         this.fechaAsignacion = fechaAsignacion;
     }
 
-     /**
-     * Establece las observaciones del código de barras.
-     * Validación: máx. 255 caracteres.
-     * (FALTA DESARROLAR ¿Esto es máximo de caracteres o de marcas?)
+    /**
+     * Establece observaciones adicionales.
+     * @param observaciones Texto de observaciones
      */
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
 
+    // =========================================
+    // MÉTODOS SOBREESCRITOS
+    // =========================================
+
     /**
-     * Devuelve una representación en cadena del código de barras.
-     * 
-     * @return String con la información del código de barras
+     * @return Representación en texto del código de barras
      */
     @Override
     public String toString() {
@@ -107,12 +136,9 @@ public void setTipo(EnumTipo tipo) {
     }
     
     /**
-     * Compara este código de barras con otro objeto para determinar igualdad.
-     * Dos códigos son iguales si tienen el mismo ID (si ambos tienen ID > 0),
-     * o si tienen el mismo valor y tipo.
-     * 
+     * Compara este código con otro objeto por ID, valor y tipo.
      * @param obj Objeto a comparar
-     * @return true si los objetos son iguales, false en caso contrario
+     * @return true si son iguales, false en caso contrario
      */
     @Override
     public boolean equals(Object obj) {
@@ -145,8 +171,7 @@ public void setTipo(EnumTipo tipo) {
     }
 
     /**
-     * Calcula el código hash del código de barras.
-     * @return Código hash del objeto
+     * @return Código hash basado en ID, valor y tipo
      */
     @Override
     public int hashCode() {
@@ -162,5 +187,4 @@ public void setTipo(EnumTipo tipo) {
         
         return result;
     }
-    
 }

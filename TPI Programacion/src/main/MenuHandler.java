@@ -24,6 +24,10 @@ import service.CodigoBarrasService;
  */
 public class MenuHandler {
 
+    // =========================================
+    // ATRIBUTOS
+    // =========================================
+
     /** Scanner para entrada de usuario, inyectado desde AppMenu */
     private final Scanner scanner;
 
@@ -33,9 +37,12 @@ public class MenuHandler {
     /** Servicio para operaciones de códigos de barras */
     private final CodigoBarrasService codigoBarrasService;
 
+    // =========================================
+    // CONSTRUCTOR
+    // =========================================
+
     /**
      * Construye MenuHandler con dependencias requeridas.
-     *
      * @param scanner Scanner para entrada de usuario
      * @param productoService Servicio de productos
      * @param codigoBarrasService Servicio de códigos de barras
@@ -56,7 +63,9 @@ public class MenuHandler {
         this.codigoBarrasService = codigoBarrasService;
     }
 
-    // MÉTODOS PRINCIPALES DEL MENÚ (CRUD PRODUCTOS)
+    // =========================================
+    // MÉTODOS CRUD DE PRODUCTOS
+    // =========================================
 
     /**
      * Crea un nuevo producto con código de barras opcional. 
@@ -125,8 +134,7 @@ public class MenuHandler {
                     System.out.println("\n↩ Volviendo al menu principal...");
                     return;
                 }
-                default ->
-                    System.out.println("\nOpción inválida.");
+                default -> System.out.println("\nOpción inválida.");
             }
 
             if (productos == null || productos.isEmpty()) {
@@ -146,112 +154,7 @@ public class MenuHandler {
     }
 
     /**
-     * Recupera todos los productos activos del sistema.
-     *
-     * @return Lista de productos, lista vacía si no hay resultados
-     */
-    private List<Producto> listarTodosProductos() {
-        try {
-            System.out.println("\nBuscando todos los productos...");
-            List<Producto> productos = productoService.getAll();
-            return productos != null ? productos : new ArrayList<>();
-        } catch (Exception e) {
-            System.err.println("Error al obtener productos: " + e.getMessage());
-            return new ArrayList<>();
-        }
-    }
-
-    /**
-     * Busca producto por ID específico.
-     *
-     * @return Lista con el producto encontrado o vacía si no existe
-     */
-    private List<Producto> listarPorId() {
-        try {
-            System.out.print("Ingrese el ID a buscar: ");
-            int id = Integer.parseInt(scanner.nextLine().trim());
-            Producto producto = productoService.getById(id);
-            List<Producto> resultado = new ArrayList<>();
-            if (producto != null) {
-                resultado.add(producto);
-            }
-            return resultado;
-        } catch (NumberFormatException e) {
-            System.err.println("Error: Debe ingresar un número válido.");
-            return new ArrayList<>();
-        } catch (Exception e) {
-            System.err.println("Error al buscar producto por ID: " + e.getMessage());
-            return new ArrayList<>();
-        }
-    }
-
-    /**
-     * Busca productos por nombre o parte del nombre.
-     *
-     * @return Lista de productos que coinciden con el criterio
-     */
-    private List<Producto> listarPorNombre() {
-        try {
-            String filtro = validarEntradaString(scanner, "nombre a buscar", 120);
-            if (filtro.isEmpty()) {
-                System.out.println("El filtro no puede estar vacío.");
-                return new ArrayList<>();
-            }
-
-            Producto producto = productoService.getByNombre(filtro);
-            List<Producto> resultado = new ArrayList<>();
-
-            if (producto != null) {
-                resultado.add(producto);
-            } else {
-                List<Producto> todos = productoService.getAll();
-                if (todos != null) {
-                    for (Producto p : todos) {
-                        if (p.getNombre() != null
-                                && p.getNombre().toLowerCase().contains(filtro.toLowerCase())) {
-                            resultado.add(p);
-                        }
-                    }
-                }
-            }
-            return resultado;
-        } catch (Exception e) {
-            System.err.println("Error al buscar productos por nombre: " + e.getMessage());
-            return new ArrayList<>();
-        }
-    }
-
-    /**
-     * Filtra productos por categoría específica.
-     *
-     * @return Lista de productos de la categoría seleccionada
-     */
-    private List<Producto> listarPorCategoria() {
-        try {
-            CategoriaProducto categoriaElegida = seleccionarCategoria();
-            System.out.println("\nBuscando productos de la categoría: " + categoriaElegida.name() + "\n");
-
-            List<Producto> todos = productoService.getAll();
-            List<Producto> productosCategoria = new ArrayList<>();
-
-            if (todos != null) {
-                for (Producto producto : todos) {
-                    if (producto.getCategoria() != null
-                            && producto.getCategoria().equals(categoriaElegida)) {
-                        productosCategoria.add(producto);
-                    }
-                }
-            }
-            return productosCategoria;
-        } catch (Exception e) {
-            System.err.println("Error al buscar productos por categoría: " + e.getMessage());
-            return new ArrayList<>();
-        }
-    }
-
-    /**
      * Actualiza un producto existente permitiendo modificar campos individualmente.
-     *
      * @throws NumberFormatException si se ingresan valores numéricos inválidos
      */
     public void actualizarProducto() {
@@ -358,7 +261,6 @@ public class MenuHandler {
 
     /**
      * Asigna un código de barras existente a un producto.
-     *
      * @throws NumberFormatException si los IDs ingresados no son válidos
      */
     public void asignarCodigoDeBarras() {
@@ -430,24 +332,113 @@ public class MenuHandler {
         }
     }
 
-    // MÉTODOS DE CÓDIGOS DE BARRAS (CRUD)
+    // =========================================
+    // MÉTODOS AUXILIARES DE PRODUCTOS
+    // =========================================
 
     /**
-     * Crea un código de barras independiente sin asociar a producto. 
-     * Captura tipo, valor y observaciones del código.
-     *
-     * @return CodigoBarras creado con los datos ingresados
+     * Recupera todos los productos activos del sistema.
+     * @return Lista de productos, lista vacía si no hay resultados
      */
-    private CodigoBarras crearCodigoBarras() {
-        int id = 0;
-        EnumTipo tipo = elegirTipoCodigo();
-        String valor = validarEntradaString(scanner, "Valor", 20);
-        LocalDate fechaAsignacion = LocalDate.now();
-        String observaciones = validarEntradaStringCantidadChar(scanner, "Observaciones (opcional)", 255);
-        String observacionesFinal = observaciones;
-
-        return new CodigoBarras(id, false, tipo, valor, fechaAsignacion, observaciones);
+    private List<Producto> listarTodosProductos() {
+        try {
+            System.out.println("\nBuscando todos los productos...");
+            List<Producto> productos = productoService.getAll();
+            return productos != null ? productos : new ArrayList<>();
+        } catch (Exception e) {
+            System.err.println("Error al obtener productos: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
+
+    /**
+     * Busca producto por ID específico.
+     * @return Lista con el producto encontrado o vacía si no existe
+     */
+    private List<Producto> listarPorId() {
+        try {
+            System.out.print("Ingrese el ID a buscar: ");
+            int id = Integer.parseInt(scanner.nextLine().trim());
+            Producto producto = productoService.getById(id);
+            List<Producto> resultado = new ArrayList<>();
+            if (producto != null) {
+                resultado.add(producto);
+            }
+            return resultado;
+        } catch (NumberFormatException e) {
+            System.err.println("Error: Debe ingresar un número válido.");
+            return new ArrayList<>();
+        } catch (Exception e) {
+            System.err.println("Error al buscar producto por ID: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Busca productos por nombre o parte del nombre.
+     * @return Lista de productos que coinciden con el criterio
+     */
+    private List<Producto> listarPorNombre() {
+        try {
+            String filtro = validarEntradaString(scanner, "nombre a buscar", 120);
+            if (filtro.isEmpty()) {
+                System.out.println("El filtro no puede estar vacío.");
+                return new ArrayList<>();
+            }
+
+            Producto producto = productoService.getByNombre(filtro);
+            List<Producto> resultado = new ArrayList<>();
+
+            if (producto != null) {
+                resultado.add(producto);
+            } else {
+                List<Producto> todos = productoService.getAll();
+                if (todos != null) {
+                    for (Producto p : todos) {
+                        if (p.getNombre() != null
+                                && p.getNombre().toLowerCase().contains(filtro.toLowerCase())) {
+                            resultado.add(p);
+                        }
+                    }
+                }
+            }
+            return resultado;
+        } catch (Exception e) {
+            System.err.println("Error al buscar productos por nombre: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Filtra productos por categoría específica.
+     * @return Lista de productos de la categoría seleccionada
+     */
+    private List<Producto> listarPorCategoria() {
+        try {
+            CategoriaProducto categoriaElegida = seleccionarCategoria();
+            System.out.println("\nBuscando productos de la categoría: " + categoriaElegida.name() + "\n");
+
+            List<Producto> todos = productoService.getAll();
+            List<Producto> productosCategoria = new ArrayList<>();
+
+            if (todos != null) {
+                for (Producto producto : todos) {
+                    if (producto.getCategoria() != null
+                            && producto.getCategoria().equals(categoriaElegida)) {
+                        productosCategoria.add(producto);
+                    }
+                }
+            }
+            return productosCategoria;
+        } catch (Exception e) {
+            System.err.println("Error al buscar productos por categoría: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    // =========================================
+    // MÉTODOS CRUD DE CÓDIGOS DE BARRAS
+    // =========================================
 
     /**
      * Crea un código de barras independiente y lo persiste en la base de datos.
@@ -480,16 +471,13 @@ public class MenuHandler {
             List<CodigoBarras> codigoBarras = new ArrayList<>();
 
             switch (subopcion) {
-                case 1 ->
-                    codigoBarras = listarCodigoBarras();
-                case 2 ->
-                    codigoBarras = listarPorIdCodigo();
+                case 1 -> codigoBarras = listarCodigoBarras();
+                case 2 -> codigoBarras = listarPorIdCodigo();
                 case 0 -> {
                     System.out.println("\n↩ Volviendo al menu principal...");
                     return;
                 }
-                default ->
-                    System.out.println("Opción inválida.");
+                default -> System.out.println("Opción inválida.");
             }
 
             if (codigoBarras == null || codigoBarras.isEmpty()) {
@@ -505,49 +493,6 @@ public class MenuHandler {
             System.err.println("\nError: Debe ingresar un número válido.");
         } catch (Exception e) {
             System.err.println("\nError al listar productos: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Recupera todos los códigos de barras activos del sistema.
-     *
-     * @return Lista de códigos de barras, lista vacía si no hay resultados
-     */
-    private List<CodigoBarras> listarCodigoBarras() {
-        System.out.println("\nBuscando todos los códogos de barra...");
-        List<CodigoBarras> codigos = new ArrayList<>();
-        try {
-            List<CodigoBarras> desdeService = codigoBarrasService.getAll();
-            if (desdeService != null) {
-                codigos.addAll(desdeService);
-            }
-        } catch (Exception e) {
-            System.err.println("Error al listar códogos de barra: " + e.getMessage());
-        }
-        return codigos;
-    }
-
-    /**
-     * Busca código de barras por ID específico.
-     *
-     * @return Lista con el código encontrado o vacía si no existe
-     */
-    private List<CodigoBarras> listarPorIdCodigo() {
-        try {
-            System.out.print("Ingrese el ID a buscar: ");
-            int id = Integer.parseInt(scanner.nextLine().trim());
-            CodigoBarras codigo = codigoBarrasService.getById(id);
-            List<CodigoBarras> resultado = new ArrayList<>();
-            if (codigo != null) {
-                resultado.add(codigo);
-            }
-            return resultado;
-        } catch (NumberFormatException e) {
-            System.err.println("Error: Debe ingresar un número válido.");
-            return new ArrayList<>();
-        } catch (Exception e) {
-            System.err.println("Error al buscar producto por ID: " + e.getMessage());
-            return new ArrayList<>();
         }
     }
 
@@ -601,8 +546,7 @@ public class MenuHandler {
     /**
      * Elimina un código de barras mediante soft delete. 
      * Solicita confirmación antes de proceder.
-     *
-     * @warning No verifica si el código está asociado a productos
+     * Nota: No verifica si el código está asociado a productos.
      */
     public void eliminarCodigoBarrasPorId() {
         try {
@@ -660,11 +604,73 @@ public class MenuHandler {
         }
     }
 
-    // MÉTODOS DE SELECCIÓN (CATEGORÍA Y TIPO)
+    // =========================================
+    // MÉTODOS AUXILIARES DE CÓDIGOS DE BARRAS
+    // =========================================
+
+    /**
+     * Crea un código de barras independiente sin asociar a producto. 
+     * Captura tipo, valor y observaciones del código.
+     * @return CodigoBarras creado con los datos ingresados
+     */
+    private CodigoBarras crearCodigoBarras() {
+        int id = 0;
+        EnumTipo tipo = elegirTipoCodigo();
+        String valor = validarEntradaString(scanner, "Valor", 20);
+        LocalDate fechaAsignacion = LocalDate.now();
+        String observaciones = validarEntradaStringCantidadChar(scanner, "Observaciones (opcional)", 255);
+        String observacionesFinal = observaciones;
+
+        return new CodigoBarras(id, false, tipo, valor, fechaAsignacion, observaciones);
+    }
+
+    /**
+     * Recupera todos los códigos de barras activos del sistema.
+     * @return Lista de códigos de barras, lista vacía si no hay resultados
+     */
+    private List<CodigoBarras> listarCodigoBarras() {
+        System.out.println("\nBuscando todos los códogos de barra...");
+        List<CodigoBarras> codigos = new ArrayList<>();
+        try {
+            List<CodigoBarras> desdeService = codigoBarrasService.getAll();
+            if (desdeService != null) {
+                codigos.addAll(desdeService);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al listar códogos de barra: " + e.getMessage());
+        }
+        return codigos;
+    }
+
+    /**
+     * Busca código de barras por ID específico.
+     * @return Lista con el código encontrado o vacía si no existe
+     */
+    private List<CodigoBarras> listarPorIdCodigo() {
+        try {
+            System.out.print("Ingrese el ID a buscar: ");
+            int id = Integer.parseInt(scanner.nextLine().trim());
+            CodigoBarras codigo = codigoBarrasService.getById(id);
+            List<CodigoBarras> resultado = new ArrayList<>();
+            if (codigo != null) {
+                resultado.add(codigo);
+            }
+            return resultado;
+        } catch (NumberFormatException e) {
+            System.err.println("Error: Debe ingresar un número válido.");
+            return new ArrayList<>();
+        } catch (Exception e) {
+            System.err.println("Error al buscar producto por ID: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    // =========================================
+    // MÉTODOS DE SELECCIÓN
+    // =========================================
 
     /**
      * Permite al usuario seleccionar una categoría de producto desde la lista disponible.
-     *
      * @return CategoriaProducto seleccionada
      */
     private CategoriaProducto seleccionarCategoria() {
@@ -692,7 +698,6 @@ public class MenuHandler {
 
     /**
      * Permite al usuario seleccionar un tipo de código de barras.
-     *
      * @return EnumTipo seleccionado
      */
     private EnumTipo elegirTipoCodigo() {
@@ -717,11 +722,12 @@ public class MenuHandler {
         }
     }
 
+    // =========================================
     // MÉTODOS DE VALIDACIÓN
-    
+    // =========================================
+
     /**
      * Valida y obtiene un número entero positivo desde la entrada del usuario.
-     *
      * @param mensaje Mensaje para solicitar la entrada
      * @param scanner Scanner para leer la entrada
      * @return Número entero positivo válido
@@ -747,7 +753,6 @@ public class MenuHandler {
 
     /**
      * Valida y obtiene un número decimal positivo desde la entrada del usuario.
-     *
      * @param mensaje Mensaje para solicitar la entrada
      * @param scanner Scanner para leer la entrada
      * @return Número decimal positivo válido
@@ -773,7 +778,6 @@ public class MenuHandler {
 
     /**
      * Valida una cadena de texto con longitud máxima.
-     *
      * @param scanner Scanner para leer la entrada
      * @param nombreVariable Nombre del campo a validar
      * @param maxChar Longitud máxima permitida
@@ -805,7 +809,6 @@ public class MenuHandler {
 
     /**
      * Valida una cadena de texto sin límite de longitud.
-     *
      * @param scanner Scanner para leer la entrada
      * @param nombreVariable Nombre del campo a validar
      * @return Cadena válida y no vacía
@@ -816,7 +819,6 @@ public class MenuHandler {
 
     /**
      * Valida una cadena de texto con límite de longitud pero también puede ser vacia.
-     *
      * @param scanner Scanner para leer la entrada
      * @param nombreVariable Nombre del campo a validar
      * @param maxChar Longitud máxima permitida

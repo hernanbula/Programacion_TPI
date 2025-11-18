@@ -1,14 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- /**
- * @authors 
- * Gaston Alberto Cejas, 
- * Hernan Cóceres, 
- * Claudio Rodriguez, 
- * Hernan E.Bula
- */
 package DAO;
+
+/**
+@author Hernan Cóceres
+@author Claudio Rodriguez
+@author Hernan E.Bula
+@author Gaston Alberto Cejas
+ */
 
 import config.DatabaseConnection;
 import model.Producto;
@@ -21,34 +18,33 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementación de DAO para operaciones CRUD de productos.
+ * Incluye gestión de códigos de barras y soporte para transacciones.
+ */
 public class ProductoDAO implements GenericDAO<Producto> {
 
-        /**
-     * Inserta un nuevo producto usando una conexión propia.
-     *
-     * <p>Este método crea y gestiona su propia conexión. Para usarlo dentro
-     * de una transacción externa, ver la sobrecarga con {@link Connection}.</p>
-     *
-     * @param entidad producto a insertar. No debe ser {@code null}.
-     * @throws Exception si ocurre un error al acceder a la base de datos.
-     * @see #insertar(Producto, Connection)
+    // =========================================
+    // MÉTODOS DE INSERCIÓN
+    // =========================================
+
+    /**
+     * Inserta un nuevo producto usando conexión automática.
+     * 
+     * @param entidad Producto a insertar
+     * @throws Exception Si ocurre error de base de datos
      */
-    
     @Override
     public void insertar(Producto entidad) throws Exception {
         insertar(entidad, null);
     }
     
     /**
-     * Inserta un producto usando una conexión existente.
-     *
-     * <p>Si {@code conn} es {@code null}, el método crea una nueva conexión
-     * y realiza <em>commit</em> al finalizar. Si se pasa una conexión externa,
-     * no se modifica su estado de transacción.</p>
-     *
-     * @param entidad producto a insertar. No debe ser {@code null}.
-     * @param conn    conexión a reutilizar, o {@code null} para crear una nueva.
-     * @throws Exception si ocurre un error al ejecutar la sentencia SQL.
+     * Inserta un producto usando conexión existente o nueva.
+     * 
+     * @param entidad Producto a insertar
+     * @param conn Conexión existente o null para nueva
+     * @throws Exception Si ocurre error en la ejecución SQL
      */
     public void insertar(Producto entidad, Connection conn) throws Exception {
         String sql = "INSERT INTO producto (nombre, marca, categoria, precio, peso, stock, codigo_barras_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -59,7 +55,6 @@ public class ProductoDAO implements GenericDAO<Producto> {
         }
         
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
             stmt.setString(1, entidad.getNombre());
             stmt.setString(2, entidad.getMarca());
             
@@ -93,33 +88,28 @@ public class ProductoDAO implements GenericDAO<Producto> {
             }
         }
     }
-    
-        /**
-     * Actualiza un producto usando una conexión propia.
-     *
-     * <p>Este método crea y gestiona su propia conexión. Para usarlo dentro
-     * de una transacción externa, ver la sobrecarga con {@link Connection}.</p>
-     *
-     * @param entidad producto con los datos actualizados.
-     * @throws Exception si ocurre un error al acceder a la base de datos.
-     * @see #actualizar(Producto, Connection)
-     */
 
+    // =========================================
+    // MÉTODOS DE ACTUALIZACIÓN
+    // =========================================
+
+    /**
+     * Actualiza un producto usando conexión automática.
+     * 
+     * @param entidad Producto con datos actualizados
+     * @throws Exception Si ocurre error de base de datos
+     */
     @Override
     public void actualizar(Producto entidad) throws Exception {
         actualizar(entidad, null);
     }
     
-      /**
-     * Actualiza un producto usando una conexión existente.
-     *
-     * <p>Si {@code conn} es {@code null}, el método crea una nueva conexión
-     * y realiza <em>commit</em> al finalizar. Si se pasa una conexión externa,
-     * no se modifica su estado de transacción.</p>
-     *
-     * @param entidad producto a actualizar. Debe tener un {@code id} válido.
-     * @param conn    conexión a reutilizar, o {@code null} para crear una nueva.
-     * @throws Exception si ocurre un error al ejecutar la sentencia SQL.
+    /**
+     * Actualiza un producto usando conexión existente o nueva.
+     * 
+     * @param entidad Producto a actualizar
+     * @param conn Conexión existente o null para nueva
+     * @throws Exception Si ocurre error en la ejecución SQL
      */
     public void actualizar(Producto entidad, Connection conn) throws Exception {
         String sql = "UPDATE producto SET nombre = ?, marca = ?, categoria = ?, precio = ?, peso = ?, stock = ?, codigo_barras_id = ? WHERE id = ?";
@@ -130,7 +120,6 @@ public class ProductoDAO implements GenericDAO<Producto> {
         }
         
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
             stmt.setString(1, entidad.getNombre());
             stmt.setString(2, entidad.getMarca());
             
@@ -160,19 +149,15 @@ public class ProductoDAO implements GenericDAO<Producto> {
         }
     }
     
-        /**
-     * Actualiza solo el código de barras asociado a un producto.
-     *
-     * <p>Este método permite asignar o quitar el código de barras sin modificar
-     * el resto de los campos del producto.</p>
-     *
-     * @param entidad producto con el código de barras actualizado.
-     * @param conn    conexión a reutilizar, o {@code null} para crear una nueva.
-     * @throws Exception si ocurre un error al ejecutar la sentencia SQL.
+    /**
+     * Asigna o actualiza código de barras a un producto.
+     * 
+     * @param entidad Producto con código de barras a asignar
+     * @param conn Conexión existente o null para nueva
+     * @throws Exception Si ocurre error en la ejecución SQL
      */
-    
-     public void asignarCodigoDeBarras(Producto entidad, Connection conn) throws Exception {
-        String sql = "UPDATE producto SET  codigo_barras_id = ? WHERE id = ?";
+    public void asignarCodigoDeBarras(Producto entidad, Connection conn) throws Exception {
+        String sql = "UPDATE producto SET codigo_barras_id = ? WHERE id = ?";
         boolean usarConexionExterna = (conn != null);
         
         if (!usarConexionExterna) {
@@ -180,7 +165,6 @@ public class ProductoDAO implements GenericDAO<Producto> {
         }
         
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
             if (entidad.getCodigoBarras() != null && entidad.getCodigoBarras().getId() > 0) {
                 stmt.setLong(1, entidad.getCodigoBarras().getId());
             } else {
@@ -200,34 +184,28 @@ public class ProductoDAO implements GenericDAO<Producto> {
         }
     }
 
-     /**
-     * Marca como eliminado (soft delete) un producto usando una conexión propia.
-     *
-     * <p>Este método actualiza la bandera <code>eliminado</code> a {@code true}
-     * para el registro indicado.</p>
-     *
-     * @param id identificador del producto a eliminar.
-     * @throws Exception si ocurre un error al acceder a la base de datos.
-     * @see #eliminar(long, Connection)
+    // =========================================
+    // MÉTODOS DE ELIMINACIÓN Y RECUPERACIÓN
+    // =========================================
+
+    /**
+     * Eliminación lógica de producto usando conexión automática.
+     * 
+     * @param id ID del producto a eliminar
+     * @throws Exception Si ocurre error de base de datos
      */
-     
     @Override
     public void eliminar(long id) throws Exception {
         eliminar(id, null);
     }
     
-     /**
-     * Marca como eliminado (soft delete) un producto usando una conexión existente.
-     *
-     * <p>Si {@code conn} es {@code null}, el método crea una nueva conexión
-     * y realiza <em>commit</em> al finalizar. Si se pasa una conexión externa,
-     * no se modifica su estado de transacción.</p>
-     *
-     * @param id   identificador del producto a eliminar.
-     * @param conn conexión a reutilizar, o {@code null} para crear una nueva.
-     * @throws Exception si ocurre un error al ejecutar la sentencia SQL.
+    /**
+     * Eliminación lógica de producto usando conexión existente o nueva.
+     * 
+     * @param id ID del producto a eliminar
+     * @param conn Conexión existente o null para nueva
+     * @throws Exception Si ocurre error en la ejecución SQL
      */
-    
     public void eliminar(long id, Connection conn) throws Exception {
         String sql = "UPDATE producto SET eliminado = true WHERE id = ? AND eliminado = false";
         boolean usarConexionExterna = (conn != null);
@@ -250,27 +228,22 @@ public class ProductoDAO implements GenericDAO<Producto> {
         }
     }
     
-        /**
-     * Recupera (revierte el soft delete) de un producto usando una conexión propia.
-     *
-     * @param id identificador del producto a recuperar.
-     * @throws Exception si ocurre un error al acceder a la base de datos.
-     * @see #recuperar(long, Connection)
+    /**
+     * Recupera producto eliminado usando conexión automática.
+     * 
+     * @param id ID del producto a recuperar
+     * @throws Exception Si ocurre error de base de datos
      */
-    
     public void recuperar(long id) throws Exception {
         recuperar(id, null);
     }
 
-      /**
-     * Recupera (revierte el soft delete) de un producto usando una conexión existente.
-     *
-     * <p>Cambia la bandera <code>eliminado</code> a {@code false} si el registro
-     * estaba previamente marcado como eliminado.</p>
-     *
-     * @param id   identificador del producto a recuperar.
-     * @param conn conexión a reutilizar, o {@code null} para crear una nueva.
-     * @throws Exception si ocurre un error al ejecutar la sentencia SQL.
+    /**
+     * Recupera producto eliminado usando conexión existente o nueva.
+     * 
+     * @param id ID del producto a recuperar
+     * @param conn Conexión existente o null para nueva
+     * @throws Exception Si ocurre error en la ejecución SQL
      */
     public void recuperar(long id, Connection conn) throws Exception {
         String sql = "UPDATE producto SET eliminado = false WHERE id = ? AND eliminado = true";
@@ -294,15 +267,16 @@ public class ProductoDAO implements GenericDAO<Producto> {
         }
     }
 
-        /**
-     * Obtiene un producto por su identificador.
-     *
-     * <p>Incluye, si existe, el código de barras asociado mediante un
-     * <code>LEFT JOIN</code>. Solo se devuelven productos no eliminados.</p>
-     *
-     * @param id identificador del producto.
-     * @return instancia de {@link Producto} o {@code null} si no se encuentra.
-     * @throws Exception si ocurre un error al acceder a la base de datos.
+    // =========================================
+    // MÉTODOS DE CONSULTA
+    // =========================================
+
+    /**
+     * Obtiene producto por ID incluyendo código de barras.
+     * 
+     * @param id ID del producto a buscar
+     * @return Producto encontrado o null si no existe
+     * @throws Exception Si ocurre error de base de datos
      */
     @Override
     public Producto getById(long id) throws Exception {
@@ -326,15 +300,12 @@ public class ProductoDAO implements GenericDAO<Producto> {
         return null;
     }
     
-        /**
+    /**
      * Obtiene todos los productos activos del sistema.
-     *
-     * <p>Incluye, si existe, el código de barras asociado a cada producto.</p>
-     *
-     * @return lista de productos no eliminados. Nunca es {@code null}.
-     * @throws Exception si ocurre un error al acceder a la base de datos.
+     * 
+     * @return Lista de productos no eliminados
+     * @throws Exception Si ocurre error de base de datos
      */
-
     @Override
     public List<Producto> getAll() throws Exception {
         List<Producto> lista = new ArrayList<>();
@@ -356,31 +327,25 @@ public class ProductoDAO implements GenericDAO<Producto> {
         return lista;
     }
 
-        /**
-     * Obtiene un producto por su nombre usando una conexión propia.
-     *
-     * @param nombre nombre exacto del producto.
-     * @return instancia de {@link Producto} o {@code null} si no se encuentra.
-     * @throws Exception si ocurre un error al acceder a la base de datos.
-     * @see #getByNombre(String, Connection)
+    /**
+     * Busca producto por nombre usando conexión automática.
+     * 
+     * @param nombre Nombre exacto del producto
+     * @return Producto encontrado o null si no existe
+     * @throws Exception Si ocurre error de base de datos
      */
-    
     public Producto getByNombre(String nombre) throws Exception {
         return getByNombre(nombre, null);
     }
     
     /**
-     * Obtiene un producto por su nombre usando una conexión existente.
-     *
-     * <p>Incluye, si existe, el código de barras asociado. Solo se tienen
-     * en cuenta productos no eliminados.</p>
-     *
-     * @param nombre nombre exacto del producto.
-     * @param conn   conexión a reutilizar, o {@code null} para crear una nueva.
-     * @return instancia de {@link Producto} o {@code null} si no se encuentra.
-     * @throws Exception si ocurre un error al ejecutar la consulta.
+     * Busca producto por nombre usando conexión existente o nueva.
+     * 
+     * @param nombre Nombre exacto del producto
+     * @param conn Conexión existente o null para nueva
+     * @return Producto encontrado o null si no existe
+     * @throws Exception Si ocurre error en la consulta SQL
      */
-    
     public Producto getByNombre(String nombre, Connection conn) throws Exception {
         String sql = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.stock, p.eliminado, " +
                      "p.codigo_barras_id, " +
@@ -410,18 +375,18 @@ public class ProductoDAO implements GenericDAO<Producto> {
         }
         return null;
     }
-    
+
+    // =========================================
+    // MÉTODOS AUXILIARES
+    // =========================================
+
     /**
-     * Método auxiliar para mapear un {@link ResultSet} con JOIN a un objeto {@link Producto}.
-     *
-     * <p>Carga el producto y, si corresponde, el código de barras asociado
-     * directamente desde el resultado del JOIN.</p>
-     *
-     * @param rs {@link ResultSet} posicionado en una fila válida con datos de producto y código.
-     * @return instancia de {@link Producto} con el código de barras cargado si existe.
-     * @throws SQLException si ocurre un error al leer los datos del {@link ResultSet}.
+     * Mapea ResultSet a objeto Producto con código de barras.
+     * 
+     * @param rs ResultSet posicionado en fila válida
+     * @return Producto mapeado con código de barras si existe
+     * @throws SQLException Si hay error al leer datos del ResultSet
      */
-    
     private Producto mapRowWithJoin(ResultSet rs) throws SQLException {
         long id = rs.getLong("id");
         String nombre = rs.getString("nombre");

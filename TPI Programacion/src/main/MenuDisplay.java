@@ -1,13 +1,16 @@
 package main;
 
 /**
- * @authors 
- * Gaston Alberto Cejas, 
- * Hernan Cóceres, 
- * Claudio Rodriguez, 
- * Hernan E.Bula
+@author Hernan Cóceres
+@author Claudio Rodriguez
+@author Hernan E.Bula
+@author Gaston Alberto Cejas
  */
 
+    // =========================================
+    // MENÚ DISPLAY (CONSOLA)
+    // =========================================
+    
 /**
  * Clase utilitaria para mostrar interfaces de menú en consola. 
  * Contiene métodos estáticos para mostrar menús y opciones al usuario.
@@ -43,5 +46,5 @@ public class MenuDisplay {
     System.out.println("│   0.   ↩ Salir");
     System.out.println("└──────────────────────────────────────────────────┘");
     System.out.print("\nSELECCIONE UNA OPCIÓN: ");
-}
+    }
 }

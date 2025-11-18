@@ -1,20 +1,21 @@
-
 package model;
 
 /**
- * @authors 
- * Gaston Alberto Cejas, 
- * Hernan Cóceres, 
- * Claudio Rodriguez, 
- * Hernan E.Bula
+@author Hernan Cóceres
+@author Claudio Rodriguez
+@author Hernan E.Bula
+@author Gaston Alberto Cejas
  */
 
 /**
- * Clase que representa un producto en el sistema.
- * Extiende de Base para heredar funcionalidad de eliminación lógica e ID.
- * Un producto puede tener asociado un código de barras.
+ * Representa un producto con nombre, marca, precio, peso, stock, categoría y código de barras.
+ * Extiende Base para heredar ID y funcionalidad de eliminación lógica.
  */
 public class Producto extends Base {
+    
+    // =========================================
+    // DECLARACIÓN DE CLASE Y ATRIBUTOS
+    // =========================================
     
     private String nombre;
     private String marca;
@@ -22,11 +23,19 @@ public class Producto extends Base {
     private double peso;
     private int stock;
     private CategoriaProducto categoria;
+    /**
+     * Asociación unidireccional 1 a 1 con CodigoBarras. 
+     * Un producto puede tener un código de barras, pero el código no conoce al producto. 
+     * Relación opcional (puede ser null).
+     */
     private CodigoBarras codigoBarras;
     
+    // =========================================
+    // CONSTRUCTORES
+    // =========================================
+    
     /**
-     * Constructor completo de Producto.
-     * 
+     * Constructor para crear producto con datos básicos.
      * @param nombre Nombre del producto
      * @param marca Marca del producto
      * @param precio Precio del producto
@@ -43,100 +52,137 @@ public class Producto extends Base {
         this.stock = stock;
     }
     
+    /**
+     * Constructor vacío para inicialización sin parámetros.
+     */
     public Producto() {
         super();
     }
     
+    // =========================================
+    // MÉTODOS GETTER
+    // =========================================
+    
+    /**
+     * @return Nombre del producto
+     */
     public String getNombre() {
         return nombre;
     }
 
+    /**
+     * @return Marca del producto
+     */
     public String getMarca() {
         return marca;
     }
 
+    /**
+     * @return Categoría del producto
+     */
     public CategoriaProducto getCategoria() {
         return categoria;
     }
 
+    /**
+     * @return Precio del producto
+     */
     public double getPrecio() {
         return precio;
     }
 
+    /**
+     * @return Peso del producto
+     */
     public double getPeso() {
         return peso;
     }
 
+    /**
+     * @return Stock disponible
+     */
     public int getStock() {
         return stock;
     }
 
+    /**
+     * Obtiene el código de barras asociado al producto (relación unidireccional
+     * 1 a 1).
+     *
+     * @return Código de barras asociado al producto, o null si no tiene
+     */
     public CodigoBarras getCodigoBarras() {
         return codigoBarras;
     }
 
+    // =========================================
+    // MÉTODOS SETTER
+    // =========================================
+    
     /**
      * Establece el nombre del producto.
-     * Validación: ProductoServiceImpl verifica que no esté vacío. (FALTA DESARROLAR ESTO)
+     * @param nombre Nombre del producto
      */
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
-     /**
+    /**
      * Establece la marca del producto.
-     * Validación: ProductoServiceImpl máx. 80 (FALTA DESARROLAR)
+     * @param marca Marca del producto
      */
     public void setMarca(String marca) {
         this.marca = marca;
     }
 
     /**
-     * Establece la categoria del producto.
-     * 
-     * @param categoria La categoría a asignar al producto
+     * Establece la categoría del producto.
+     * @param categoria Categoría del producto
      */
     public void setCategoria(CategoriaProducto categoria) {
         this.categoria = categoria;
     }
 
     /**
-     * Establece el precio del producto. 
-     * Validación: ProductoServiceImpl verifica que no esté vacío y que escala sugerida sea (10,2). (FALTA DESARROLAR ESTO)
+     * Establece el precio del producto.
+     * @param precio Precio del producto
      */
     public void setPrecio(double precio) {
         this.precio = precio;
     }
     
     /**
-     * Establece el precio del producto. 
-     * Validación: ProductoServiceImpl puede ser opcional, pero si se completa verifica que escala sugerida sea (10,3). (FALTA DESARROLAR ESTO)
+     * Establece el peso del producto.
+     * @param peso Peso del producto
      */
     public void setPeso(double peso) {
         this.peso = peso;
     }
 
     /**
-     * Establece el stock del producto. 
-     * Validación: ProductoServiceImpl (FALTA DESARROLAR ESTO)
+     * Establece el stock del producto.
+     * @param stock Cantidad en stock
      */
-   public void setStock(int stock) {
-    this.stock = stock;
-}
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
 
-     /**
-     * Setea la asociación unidireccional del codigo de barras.
-     * (HACE FALTA DESARROLAR ESTO De OTRA MANERA MÁS COMPLEJA???)
+    /**
+     * Establece la asociación unidireccional 1 a 1 con código de barras. 
+     * El producto referencia al código, pero el código no referencia al producto.
+     *
+     * @param codigoBarras Código de barras a asociar (puede ser null para eliminar la asociación)
      */
     public void setCodigoBarras(CodigoBarras codigoBarras) {
         this.codigoBarras = codigoBarras;
     }
 
+    // =========================================
+    // MÉTODOS SOBREESCRITOS
+    // =========================================
+    
     /**
-     * Devuelve una representación en cadena del producto.
-     * Incluye toda la información del producto y su código de barras si está asignado.
-     * 
-     * @return String con la información completa del producto
+     * @return Representación en texto del producto con todos sus atributos
      */
     @Override
     public String toString() {
@@ -161,9 +207,9 @@ public class Producto extends Base {
     }
     
     /**
-     * Compara este producto con otro objeto para determinar igualdad.
+     * Compara este producto con otro por ID, nombre, marca, categoría, precio y stock.
      * @param obj Objeto a comparar
-     * @return true si los objetos son iguales, false en caso contrario
+     * @return true si son iguales, false en caso contrario
      */
     @Override
     public boolean equals(Object obj) {
@@ -208,8 +254,7 @@ public class Producto extends Base {
     }
 
     /**
-     * Calcula el código hash del producto.
-     * @return Código hash del objeto
+     * @return Código hash basado en ID, nombre, marca, categoría, precio y stock
      */
     @Override
     public int hashCode() {
@@ -229,5 +274,4 @@ public class Producto extends Base {
         
         return result;
     }
-    
 }

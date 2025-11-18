@@ -1,12 +1,12 @@
 package main;
 
 /**
- * @authors 
- * Gaston Alberto Cejas, 
- * Hernan Cóceres, 
- * Claudio Rodriguez, 
- * Hernan E.Bula
+@author Hernan Cóceres
+@author Claudio Rodriguez
+@author Hernan E.Bula
+@author Gaston Alberto Cejas
  */
+
 import java.util.Scanner;
 import service.ProductoService;
 import service.CodigoBarrasService;
@@ -17,6 +17,10 @@ import service.CodigoBarrasService;
  */
 public class AppMenu {
 
+    // =========================================
+    // ATRIBUTOS
+    // =========================================
+
     /** Scanner para entrada de usuario, compartido en toda la aplicación */
     private final Scanner scanner;
 
@@ -25,6 +29,10 @@ public class AppMenu {
 
     /** Controla la ejecución del bucle principal */
     private boolean running;
+
+    // =========================================
+    // CONSTRUCTOR
+    // =========================================
 
     /**
      * Construye e inicializa la aplicación con todas las dependencias. 
@@ -37,6 +45,10 @@ public class AppMenu {
         this.menuHandler = new MenuHandler(scanner, productoService, codigoBarrasService);
         this.running = true;
     }
+
+    // =========================================
+    // MÉTODO PRINCIPAL
+    // =========================================
 
     /**
      * Ejecuta el bucle principal de la aplicación. 
@@ -65,9 +77,12 @@ public class AppMenu {
         scanner.close();
     }
 
+    // =========================================
+    // MÉTODOS DE NAVEGACIÓN
+    // =========================================
+
     /**
      * Procesa la opción del menú seleccionada delegando al handler correspondiente.
-     *
      * @param opcion Opción numérica del menú a ejecutar
      */
     private void procesarOpcion(int opcion) {
@@ -88,15 +103,16 @@ public class AppMenu {
                 System.out.println("Saliendo...");
                 running = false;
             }
-            default ->
-                System.out.println("Opcion no valida.");
+            default -> System.out.println("Opcion no valida.");
         }
     }
 
+    // =========================================
+    // MÉTODOS DE INICIALIZACIÓN
+    // =========================================
+
     /**
      * Crea el servicio de productos con sus dependencias.
-     * ProductoDAO → ProductoService
-     *
      * @return Instancia configurada de ProductoService
      */
     private ProductoService createProductoService() {
@@ -105,8 +121,6 @@ public class AppMenu {
 
     /**
      * Crea el servicio de códigos de barras con sus dependencias.
-     * CodigoBarrasDAO → CodigoBarrasService
-     *
      * @return Instancia configurada de CodigoBarrasService
      */
     private CodigoBarrasService createCodigoBarrasService() {
