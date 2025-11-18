@@ -329,7 +329,7 @@ El proyecto incluye **documentación Javadoc completa** generada automáticament
 | **Inicialización automática BD** | ✅ | DatabaseConnection.inicializarBaseDatos() |
 | **Scripts SQL** | ✅ | Incluidos en el proyecto |
 | **Diagrama UML** | ✅ | Incluido en documentación |
-| **Javadocs** | ✅ | Documentación completa y generada en `/dist/javadoc/` |
+| **Javadocs** | ✅ | Documentación en `/dist/javadoc/` |
 
 ---
 
@@ -374,6 +374,8 @@ El proyecto incluye **documentación Javadoc completa** generada automáticament
 | **Documentación README** | ✅ | Completa y detallada |
 | **Diagrama UML** | ✅ | Incluido en documentación |
 | **Video Explicativo** | ✅ | Integrantes del grupo explicando el trabajo |
+| **Javadocs** | ✅ | Documentación completa y generada en `/dist/javadoc/` |
+
 
 ---
 
