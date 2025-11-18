@@ -37,7 +37,7 @@ El sistema implementa un **sistema de gestión de inventario** para depósitos o
 
 **Elementos principales del diagrama:**
 - **Relación 1→1 unidireccional**: Producto → CodigoBarras
-- **Arquitectura en 5 capas**: config, model, dao, service, main
+- **Arquitectura en 4 capas + 1 capa auxiliar (config)**: model, dao, service, main
 - **Clase Base**: Implementa eliminación lógica con `id: Long` y `eliminado: Boolean`
 - **Enumeraciones**: CategoriaProducto y EnumTipo para validaciones
 - **Patrón DAO**: GenericDAO con implementaciones específicas
